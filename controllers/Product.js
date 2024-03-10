@@ -1,39 +1,41 @@
 const Product = require('../models/product');
 const sequelize = require('sequelize');
-const getRandomRating = () =>{
-        return Math.floor(Math.random() * 5);
+const getRandomRating = () => {
+    return Math.floor(Math.random() * 5);
 }
 
+const search = (request, response) => {
+    response.render('products/search', {});
+}
 
-const getProducts = (request , response) =>{
+const getProducts = (request, response) => {
 
     Product.findAll()
-            .then(products =>{
-                const ratedProducts = products.map(p => {
-                    p.rating = getRandomRating();
-                    return p;
-                })
-                response.render('products/all', {products: ratedProducts});
-
-            }).catch(err =>{
-                response.render('404');   
+        .then(products => {
+            const ratedProducts = products.map(p => {
+                p.rating = getRandomRating();
+                return p;
             })
+            response.render('products/all', { products: ratedProducts });
 
-
+        }).catch(err => {
+            response.render('404');
+        })
 }
 
-const singleProduct = async (request , response) =>{
+const singleProduct = async (request, response) => {
     const id = request.params.productId;
-    const product = await Product.findOne({where:{id: id}, raw: true});
-    if(product){
+    const product = await Product.findOne({ where: { id: id }, raw: true });
+    if (product) {
         response.render('products/single', product);
-    }else{
+    } else {
         response.render('404');
     }
-    
+
 }
 
-module.exports ={
+module.exports = {
     singleProduct,
-    getProducts
+    getProducts,
+    search
 }
